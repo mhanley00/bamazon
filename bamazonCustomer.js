@@ -25,8 +25,10 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
     // call functions here
-    showMerch();
-    pawnProducts();
+    // console.log("pawnproducts: "+ pawnProducts);n
+    showMerch(pawnProducts);
+    
+    // pawnProducts();
 });
 
 // ______________________________________________________________________________
@@ -62,20 +64,22 @@ app.listen(PORT, function () {
 //    * This means updating the SQL database to reflect the remaining quantity.
 //    * Once the update goes through, show the customer the total cost of their purchase.
 
-function showMerch() {
-        // query the database for all items being auctioned
-        let query = connection.query("SELECT * FROM products",
-         function(err, res) {
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-            console.log("Welcome to the Bamazon Tracksmith Popup Shop!🎽🐇🏃‍♂️");
-            if (err) throw err;
-                for (let i = 0; i < res.length; i++) {
-                  console.log(res[i].item_id + " | " + 
-                  res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity + "\n");
-                }
-                console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-              })
-              console.log(query.sql);
+function showMerch(pawnProducts) {
+    // query the database for all items being auctioned
+    let query = connection.query("SELECT * FROM products",
+    function(err, res) {
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+        console.log("Welcome to the Bamazon Tracksmith Popup Shop!🎽🐇🏃‍♂️");
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            console.log(res[i].item_id + " | " + 
+            res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity + "\n");
+        }
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+        pawnProducts(); //put inside database call to make sure this code runs before pawnProducts();
+        //pass function as variable
+    })
+    console.log(query.sql);
 }
 
 function pawnProducts() {
