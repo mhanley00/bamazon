@@ -1,5 +1,5 @@
 // ______________________________________________________________________________
-// DEPENDENCIES - npm packages + API keys
+// DEPENDENCIES - npm packages + database
 // -----–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 const mysql = require("mysql");
 const inquirer = require("inquirer");
