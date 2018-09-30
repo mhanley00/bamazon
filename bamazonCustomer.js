@@ -27,7 +27,7 @@ connection.connect(function (err) {
     // call functions here
     // console.log("pawnproducts: "+ pawnProducts);n
     showMerch(pawnProducts);
-    
+
     // pawnProducts();
 });
 
@@ -56,108 +56,95 @@ app.listen(PORT, function () {
 //    * The first should ask them the ID of the product they would like to buy.✅
 //    * The second message should ask how many units of the product they would like to buy.✅
 
-// 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
+// 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request..✅
 
-//    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
+//    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through..✅
 
 // 8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-//    * This means updating the SQL database to reflect the remaining quantity.
-//    * Once the update goes through, show the customer the total cost of their purchase.
+//    * This means updating the SQL database to reflect the remaining quantity. ✅
+//    * Once the update goes through, show the customer the total cost of their purchase.✅
+let userPurchase; 
+let totalCost;
 
 function showMerch(pawnProducts) {
     // query the database for all items being auctioned
     let query = connection.query("SELECT * FROM products",
-    function(err, res) {
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-        console.log("Welcome to the Bamazon Tracksmith Popup Shop!🎽🐇🏃‍♂️");
-        if (err) throw err;
-        for (let i = 0; i < res.length; i++) {
-            console.log(res[i].item_id + " | " + 
-            res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity + "\n");
-        }
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-        pawnProducts(); //put inside database call to make sure this code runs before pawnProducts();
-        //pass function as variable
-    })
+        function (err, res) {
+            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+            console.log("Welcome to the Bamazon Tracksmith Popup Shop!🎽🐇🏃‍♂️");
+            if (err) throw err;
+            for (let i = 0; i < res.length; i++) {
+                console.log(res[i].item_id + " | " +
+                    res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity + "\n");
+            }
+            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+            pawnProducts(); //put inside database call to make sure this code runs before pawnProducts();
+            //pass function as variable
+        })
     console.log(query.sql);
 }
 
 function pawnProducts() {
-    let query = connection.query("SELECT * FROM products",
-    function(err, res) {
-        if (err) throw err;
-    inquirer
-      .prompt([
-          {
-        name: "selectItem",
-        type: "input",
-        message: "\nWhich expensive Tracksmith item would you like to purchase today? Please enter the id.",
-        function(value) { //make sure customer enters number, from inquirer documentation
-            let valid = !isNaN(parseFloat(value));
-            return valid || "\nPlease enter the item id of the item you would like to purchase";
-          },
-          filter: Number
-      },
-      {
-        name: "qty",
-        type: "input",
-        message: "\nHow many of those would you like to purchase?",
-        function(value) {  //make sure customer enters number, from inquirer documentation
-            let valid = !isNaN(parseFloat(value));
-            return valid || "\nI'm sorry, that wasn't a number. Please enter a number.";
-          },
-          filter: Number    
-        }
-      ]).then(answers => { //trying out this arrow function thing again 🙌
-            // get the information of the chosen item
-            let userPurchase;
-            for (let i = 0; i < res.length; i++) {
-              if (res[i].product_name === answers.choice) {
-                userPurchase = res[i];
-                console.log(userPurchase);
-              }
-            }
-            console.log(query.sql);
+    connection.query("SELECT * FROM products",
+        function (err, res) {
+            if (err) throw err;
+            inquirer.prompt([{
+                    name: "selectItem",
+                    type: "input",
+                    message: "\nWhich expensive Tracksmith item would you like to purchase today? Please enter the id.",
+                    function (value) { //make sure customer enters number, from inquirer documentation
+                        let valid = !isNaN(parseFloat(value));
+                        return valid || "\nPlease enter the item id of the item you would like to purchase";
+                    },
+                    filter: Number
+                },
+                {
+                    name: "qty",
+                    type: "input",
+                    message: "\nHow many of those would you like to purchase?",
+                    function (value) { //make sure customer enters number, from inquirer documentation
+                        let valid = !isNaN(parseFloat(value));
+                        return valid || "\nI'm sorry, that wasn't a number. Please enter a number.";
+                    },
+                    filter: Number
+                }
+            ]).then(answers => {
+                for (let i = 0; i < res.length; i++) {
+                    if (answers.selectItem === res[i].item_id) {
+                        userPurchase = res[i];
+                        totalCost = (userPurchase.price * answers.qty);
+                        if (userPurchase.stock_quantity >= parseInt(answers.qty)) {
+                            let productLeft = (userPurchase.stock_quantity - answers.qty); //the expensive Tracksmith item customer has selected to purchase 
+                            //b/c userPurchase.stock_quantity is really res[i].stock_quantity
+                            // and ansers.qty is from the .then(answers), built in q name:qty
+                             connection.query( // let query =
+                                "UPDATE products SET ? WHERE ?",
+                                [{
+                                        stock_quantity: productLeft
+                                    },
+                                    {
+                                        item_id: userPurchase.item_id
+                                    }
+                                ],
+                                function (error) {
+                                    if (error) throw err;
+                                    console.log("Thank you for your purchase! You look faster already. 🏃🏽‍♀️💨");
+                                    console.log("\nHere's your receipt. You can return an item for up to 30 days after purchase.");
+                                    // console.log(JSON.stringify(answers, null, '  ')); // basic receipt
+                                    console.log(`Item #: ${userPurchase.item_id} | Product Name: ${userPurchase.product_name} | Quantity: ${answers.qty} | Price: $${totalCost} \n`);
+                                    console.log(`stock_quantity after: ${userPurchase.stock_quantity} \n`);
 
-        //     // determine if bid was high enough
-        //     if (userPurchase.highest_bid < parseInt(answers.bid)) {
-        //       // bid was high enough, so update db, let the user know, and start over
-        //       connection.query(
-        //         "UPDATE auctions SET ? WHERE ?",
-        //         [
-        //           {
-        //             highest_bid: answers.bid
-        //           },
-        //           {
-        //             id: userPurchase.id
-        //           }
-        //         ],
-        //         function(error) {
-        //           if (error) throw err;
-        //           console.log("Bid placed successfully!");
-        //           start();
-        //         }
-        //       );
-        //     }
-        //     else {
-        //       // bid wasn't high enough, so apologize and start over
-        //       console.log("Your bid was too low. Try again...");
-        //       start();
-        //     }
-        //   });
-        
-        
-        
-        
-        console.log("\nHere's your receipt. You can return an item for up to 30 days after purchase.");
-        console.log(JSON.stringify(answers, null, '  '));
-      //.then(function(answers) {
-        // based on their answers, either call the bid or the post functions
-        // if (answers.postOrBid.toUpperCase() === "POST") {
-        //   postAuction();
-        // }
-        // else {
-        //   bidAuction();
-        // }
-      });
- })}
+                                }
+                            );
+                        } else {
+                            //classic Tracksmith, they ran out
+                            console.log(`I'm sorry, we don't have any ${userPurchase.product_name} left 😓. Is there anything else you'd like to purchase?`);
+                            // start();
+                        }
+
+                    }
+                }
+            });
+
+        });
+};

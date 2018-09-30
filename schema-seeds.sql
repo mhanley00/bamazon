@@ -17,10 +17,10 @@ INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("Tracksmith Sports Bra", "Activewear", 90.00, 50), 
 ("Tracksmith Merino Pullover", "Activewear", 140.00, 43),
 ("Tracksmith Greyboy Tank", "Activewear", 52.00, 61),
-("Tracksmith Split Shorts", "Activewear", 48.00, 19),
+("Tracksmith Split Shorts", "Activewear", 48.00, 20),
 ("Tracksmith Team Hoodie", "Activewear", 88.00, 37),
-("Tracksmith x Noah NYC Tank", "Activewear", 48.00, 19),
-("Tracksmith x Noah NYC Shorts", "Activewear", 50.00, 19),
-("Tracksmith Merino Harrier Tank", "Activewear", 52.00, 19),
-("Tracksmith Terry Jogger", "Activewear", 50.00, 19),
-("Tracksmith Split Shorts", "Activewear", 48.00, 19);
+("Tracksmith x Noah NYC Tank", "Activewear", 48.00, 20),
+("Tracksmith x Noah NYC Shorts", "Activewear", 50.00, 20),
+("Tracksmith Merino Harrier Tank", "Activewear", 52.00, 20),
+("Tracksmith Terry Jogger", "Activewear", 50.00, 20),
+("Tracksmith Split Shorts", "Activewear", 48.00, 20);
