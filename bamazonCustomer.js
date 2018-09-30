@@ -53,8 +53,8 @@ app.listen(PORT, function () {
 
 // 6. The app should then prompt users with two messages.
 
-//    * The first should ask them the ID of the product they would like to buy.
-//    * The second message should ask how many units of the product they would like to buy.
+//    * The first should ask them the ID of the product they would like to buy.✅
+//    * The second message should ask how many units of the product they would like to buy.✅
 
 // 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
 
@@ -83,40 +83,81 @@ function showMerch(pawnProducts) {
 }
 
 function pawnProducts() {
+    let query = connection.query("SELECT * FROM products",
+    function(err, res) {
+        if (err) throw err;
     inquirer
       .prompt([
           {
         name: "selectItem",
         type: "input",
-        message: "Which expensive Tracksmith item would you like to purchase today? Please enter the id.",
+        message: "\nWhich expensive Tracksmith item would you like to purchase today? Please enter the id.",
         function(value) { //make sure customer enters number, from inquirer documentation
             let valid = !isNaN(parseFloat(value));
-            return valid || "Please enter the item id of the item you would like to purchase";
+            return valid || "\nPlease enter the item id of the item you would like to purchase";
           },
           filter: Number
       },
       {
         name: "qty",
         type: "input",
-        message: "How many of those would you like to purchase?",
+        message: "\nHow many of those would you like to purchase?",
         function(value) {  //make sure customer enters number, from inquirer documentation
             let valid = !isNaN(parseFloat(value));
-            return valid || "I'm sorry, that wasn't a number. Please enter a number.";
+            return valid || "\nI'm sorry, that wasn't a number. Please enter a number.";
           },
           filter: Number    
         }
       ]).then(answers => { //trying out this arrow function thing again 🙌
-        let userPurchase;
+            // get the information of the chosen item
+            let userPurchase;
+            for (let i = 0; i < res.length; i++) {
+              if (res[i].product_name === answers.choice) {
+                userPurchase = res[i];
+                console.log(userPurchase);
+              }
+            }
+            console.log(query.sql);
+
+        //     // determine if bid was high enough
+        //     if (userPurchase.highest_bid < parseInt(answers.bid)) {
+        //       // bid was high enough, so update db, let the user know, and start over
+        //       connection.query(
+        //         "UPDATE auctions SET ? WHERE ?",
+        //         [
+        //           {
+        //             highest_bid: answers.bid
+        //           },
+        //           {
+        //             id: userPurchase.id
+        //           }
+        //         ],
+        //         function(error) {
+        //           if (error) throw err;
+        //           console.log("Bid placed successfully!");
+        //           start();
+        //         }
+        //       );
+        //     }
+        //     else {
+        //       // bid wasn't high enough, so apologize and start over
+        //       console.log("Your bid was too low. Try again...");
+        //       start();
+        //     }
+        //   });
+        
+        
+        
         
         console.log("\nHere's your receipt. You can return an item for up to 30 days after purchase.");
         console.log(JSON.stringify(answers, null, '  '));
-    //   .then(function(answer) {
-    //     // based on their answer, either call the bid or the post functions
-    //     // if (answer.postOrBid.toUpperCase() === "POST") {
-    //     //   postAuction();
-    //     // }
-    //     // else {
-    //     //   bidAuction();
-    //     // }
-    //   });
- }); }
+      //.then(function(answers) {
+        // based on their answers, either call the bid or the post functions
+        // if (answers.postOrBid.toUpperCase() === "POST") {
+        //   postAuction();
+        // }
+        // else {
+        //   bidAuction();
+        // }
+      });
+ })}
