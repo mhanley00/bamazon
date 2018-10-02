@@ -74,8 +74,8 @@ function showMerch(pawnProducts) {
             console.log("Welcome to the Bamazon Tracksmith Popup Shop!🎽🐇🏃‍♂️");
             if (err) throw err;
             for (let i = 0; i < res.length; i++) {
-                console.log(res[i].item_id + " | " +
-                    res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity + "\n");
+                console.log(`${res[i].item_id} | ${res[i].product_name} | ${res[i].department_name} | ${res[i].price} | " ${res[i].stock_quantity} \n`);
+                    //CellSpace(res[i].product_name) + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity + "\n");
             }
             console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
             pawnProducts(); //put inside database call to make sure this code runs before pawnProducts();
@@ -148,3 +148,19 @@ function pawnProducts() {
 
         });
 };
+
+
+// function CellSpace(cell) { 
+// 	this.cell = "  " + cell;
+// 	this.space = 28; //make this different for different cell widths
+// 	this.cellSpacing = function() {
+// 		for (var i = 0; i < this.cell.length; i++) {
+// 			this.space--;			
+// 		}
+// 		for (var i = 0; i < this.space; i++) {
+// 					this.cell += " ";
+// 		}		
+// 	}
+// 	this.cellSpacing();
+// 	return this.cell
+// };
